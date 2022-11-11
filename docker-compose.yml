@@ -47,7 +47,7 @@ services:
       context: nginx
     # データの永続化（ローカルのカレントディレクトリにマウント）
     volumes:
-      - ./nginx/log:/var/log
+      - ./nginx/log:/var/log/nginx
     # ポートの指定（外部からアクセス時のポート：コンテナからアクセス時のポート）
     ports:
       - 80:80
