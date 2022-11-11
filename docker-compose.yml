@@ -48,6 +48,8 @@ services:
     # データの永続化（ローカルのカレントディレクトリにマウント）
     volumes:
       - ./nginx/log:/var/log/nginx
+      - ./tmp:/spa2210-b/tmp
+      - ./public:/spa2210-b/public
     # ポートの指定（外部からアクセス時のポート：コンテナからアクセス時のポート）
     ports:
       - 80:80
