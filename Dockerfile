@@ -1,15 +1,9 @@
-## ENVの設定
-# railsコンソール中で日本語入力するための設定
-ENV LANG=C.UTF-8
-# 本番環境用のRAILS_ENV設定
-ENV RAILS_ENV=production
-# 2022年10月時点の最新版のbundler
-# bundlerのバージョンを固定するための設定
-ENV BUNDLER_VERSION=2.3.25
-
 ## ビルドステージ
 # 2022年10月時点の最新安定版のRuby
 FROM ruby:3.1.2 AS builder
+# 2022年10月時点の最新版のbundler
+# bundlerのバージョンを固定するための設定
+ENV BUNDLER_VERSION=2.3.25
 # インストール可能なパッケージ一覧の更新
 RUN apt-get update -qq \
     # パッケージのインストール
@@ -32,10 +26,14 @@ RUN bundle install --jobs=4
 ## マルチステージビルド
 # 2022年10月時点の最新安定版のRuby
 FROM ruby:3.1.2
+# railsコンソール中で日本語入力するための設定
+ENV LANG=C.UTF-8
+# 本番環境用のRAILS_ENV設定
+ENV RAILS_ENV=production
 # インストール可能なパッケージ一覧の更新
 RUN apt-get update -qq \
     # パッケージのインストール（-yは全部yesにするオプション）
-    -y vim-gtk \
+    && apt-get install -y vim-gtk \
     # キャッシュを削除して容量を小さくする
     && rm -rf /var/lib/apt/lists/*
 # 作業ディレクトリの指定
