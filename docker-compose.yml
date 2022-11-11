@@ -32,6 +32,7 @@ services:
     # データの永続化（ローカルのカレントディレクトリにマウント）
     volumes:
       - .:/spa2210-b
+      - ./tmp/sockets:/spa2210-b/tmp/sockets
     # 標準入出力デバイスを設定
     tty: true
     stdin_open: true
