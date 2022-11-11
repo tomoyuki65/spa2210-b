@@ -42,6 +42,8 @@ WORKDIR /spa2210-b
 # ビルドステージからファイルをコピー
 COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY . /spa2210-b
+# puma.sockを配置するディレクトリを作成
+RUN mkdir -p tmp/sockets
 # コンテナ起動時に実行するスクリプト
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
