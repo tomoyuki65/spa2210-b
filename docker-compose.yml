@@ -6,7 +6,7 @@ services:
     container_name: spa2210-b_db
     # 2022年10月時点の最新版MySQL
     image: mysql:8.0.31
-    # 環境変数の設定（db.envから読み込む）
+    # 環境変数の設定（.envから読み込む）
     env_file:
       - ./.env
     # ポートの指定（外部からアクセス時のポート：コンテナからアクセス時のポート）
@@ -21,7 +21,7 @@ services:
     container_name: spa2210-b_app
     # Dockerfileのあるディレクトリパスを指定
     build: .
-    # 環境変数の設定（db.envから読み込む）
+    # 環境変数の設定（.envから読み込む）
     env_file:
       - ./.env
     # 開発環境のRAILS_ENVはdevelopmentを設定
@@ -29,9 +29,11 @@ services:
       - RAILS_ENV=development
     # コマンド実行（Rails特有の問題解決とRailsの立ち上げ）
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec pumactl start"
-    # データの永続化（ローカルのカレントディレクトリにマウント）
+    # データの永続化
     volumes:
+      # ローカルのカレントディレクトリにマウント
       - .:/spa2210-b
+      # Webサーバー側からpuma.sockを見れるようにするため永続化
       - ./tmp/sockets:/spa2210-b/tmp/sockets
     # 標準入出力デバイスを設定
     tty: true
@@ -46,9 +48,11 @@ services:
     # Dockerfileのあるディレクトリパスを指定
     build:
       context: nginx
-    # データの永続化（ローカルのカレントディレクトリにマウント）
+    # データの永続化
     volumes:
+      # Nginxのログ出力を永続化
       - ./nginx/log:/var/log/nginx
+      # Webサーバー側からアプリの/tmpと/publicを見れるようにするため永続化
       - ./tmp:/spa2210-b/tmp
       - ./public:/spa2210-b/public
     # ポートの指定（外部からアクセス時のポート：コンテナからアクセス時のポート）
