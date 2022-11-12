@@ -23,5 +23,19 @@ module Spa2210B
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # ジェネレータの設定を追加
+    config.generators do |g|
+      g.test_framework :rspec,
+        fixtures: false,
+        helper_specs: false,
+        view_specs: false,
+        routing_specs: false
+    end
+
+    # タイムゾーン設定を日本にする
+    config.time_zone = "Asia/Tokyo"
+    config.active_record.default_timezone = :local
+
   end
 end
