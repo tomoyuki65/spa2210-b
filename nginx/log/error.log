@@ -1,0 +1,14 @@
+2022/11/12 16:46:45 [notice] 1#1: using the "epoll" event method
+2022/11/12 16:46:45 [notice] 1#1: nginx/1.23.2
+2022/11/12 16:46:45 [notice] 1#1: built by gcc 11.2.1 20220219 (Alpine 11.2.1_git20220219) 
+2022/11/12 16:46:45 [notice] 1#1: OS: Linux 5.10.124-linuxkit
+2022/11/12 16:46:45 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2022/11/12 16:46:45 [notice] 1#1: start worker processes
+2022/11/12 16:46:45 [notice] 1#1: start worker process 6
+2022/11/12 16:46:45 [notice] 1#1: start worker process 7
+2022/11/12 16:46:57 [crit] 7#7: *1 connect() to unix:///spa2210-b/tmp/sockets/puma.sock failed (2: No such file or directory) while connecting to upstream, client: 172.18.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "http://unix:///spa2210-b/tmp/sockets/puma.sock:/", host: "localhost"
+2022/11/12 16:46:57 [crit] 7#7: *1 connect() to unix:///spa2210-b/tmp/sockets/puma.sock failed (2: No such file or directory) while connecting to upstream, client: 172.18.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "http://unix:///spa2210-b/tmp/sockets/puma.sock:/500.html", host: "localhost"
+2022/11/12 16:46:58 [crit] 7#7: *1 connect() to unix:///spa2210-b/tmp/sockets/puma.sock failed (2: No such file or directory) while connecting to upstream, client: 172.18.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "http://unix:///spa2210-b/tmp/sockets/puma.sock:/", host: "localhost"
+2022/11/12 16:46:58 [crit] 7#7: *1 connect() to unix:///spa2210-b/tmp/sockets/puma.sock failed (2: No such file or directory) while connecting to upstream, client: 172.18.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "http://unix:///spa2210-b/tmp/sockets/puma.sock:/500.html", host: "localhost"
+2022/11/12 16:46:59 [crit] 7#7: *1 connect() to unix:///spa2210-b/tmp/sockets/puma.sock failed (2: No such file or directory) while connecting to upstream, client: 172.18.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "http://unix:///spa2210-b/tmp/sockets/puma.sock:/", host: "localhost"
+2022/11/12 16:46:59 [crit] 7#7: *1 connect() to unix:///spa2210-b/tmp/sockets/puma.sock failed (2: No such file or directory) while connecting to upstream, client: 172.18.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "http://unix:///spa2210-b/tmp/sockets/puma.sock:/500.html", host: "localhost"
