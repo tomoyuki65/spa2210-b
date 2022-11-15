@@ -15,10 +15,7 @@ RUN apk update && \
     apk add --virtual build-packs --no-cache \
             alpine-sdk \
             build-base \
-            curl-dev && \
-    # パッケージのインストール（-no-cacheでキャッシュ削除）
-    apk add --no-cache \
-            bash \
+            curl-dev \
             mysql-dev \
             tzdata
 # 作業ディレクトリの指定
