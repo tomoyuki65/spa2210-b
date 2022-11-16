@@ -47,7 +47,9 @@ services:
     container_name: spa2210-b_web
     # Dockerfileのあるディレクトリパスを指定
     build:
-      context: nginx
+      context: .
+      dockerfile: ./nginx/Dockerfile
+      #context: ./nginx
     # データの永続化
     volumes:
       # Nginxのログ出力を永続化
