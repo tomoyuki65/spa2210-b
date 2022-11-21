@@ -125,39 +125,31 @@ workflows:
   test-and-deploy-wf:
     jobs:
       - test
-      - deploy_ecr_web
-        requires:
-          - test
-        filters:
-          branches:
-            only: main
-      - deploy_ecs_web
-        requires:
-          - deploy_ecr_web
-
       # ECRにDockerイメージをプッシュ
-      # - aws-ecr/build-and-push-image:
-      #     # Dockerfileのパス
-      #     dockerfile: ./nginx/Dockerfile
-      #     # ECRのリポジトリ
-      #     repo: spa2210-b_web
-      #     tag: "latest"
-      #     requires:
-      #       - test
-      #     filters:
-      #       branches:
-      #         only: main
-      # - aws-ecs/deploy-service-update:
-      #     # クラスター名
-      #     cluster: "spa2210-b-cluster"
-      #     # サービス名
-      #     service-name: "spa2210-b-service"
-      #     # タスク定義名
-      #     family: "spa2210-b-3-task"
-      #     # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
-      #     container-image-name-updates: "container=spa2210-b_web,tag=latest"
-      #     requires:
-      #       - aws-ecr/build-and-push-image
+      - aws-ecr/build-and-push-image:
+          # Dockerfileのパス
+          dockerfile: ./nginx/Dockerfile
+          # ECRのリポジトリ
+          repo: spa2210-b_web
+          tag: "latest"
+          # ジョブの実行条件
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+      - aws-ecs/deploy-service-update:
+          # クラスター名
+          cluster: "spa2210-b-cluster"
+          # サービス名
+          service-name: "spa2210-b-service"
+          # タスク定義名
+          family: "spa2210-b-3-task"
+          # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
+          container-image-name-updates: "container=spa2210-b_web,tag=latest"
+          # ジョブの実行条件
+          requires:
+            - aws-ecr/build-and-push-image
 
       # - deploy_ecs_web
       #     requires:
