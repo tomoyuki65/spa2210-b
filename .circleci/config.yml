@@ -1,0 +1,158 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+# AWS用のorbsを利用する(バージョンは最新のものを使って下さい)
+orbs:
+  aws-ecr: circleci/aws-ecr@8.1.3
+  aws-ecs: circleci/aws-ecs@03.2.0
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  # テスト用のジョブ
+  test:
+    # docker compose　を利用するため、仮想マシンを利用する。（最新版のimageは下記URLを参照）
+    # See: https://circleci.com/docs/ja/configuration-reference#available-linux-machine-images
+    machine:
+      image: ubuntu-2204:current
+    # 仮想マシンを利用する場合、CircleCIの環境変数はDockerのコンテナ内へは直接読み込めない。
+    # そのまま代入もできないため、一度parametersを設定する。
+    parameters:
+      rails_master_key:
+        type: string
+        default: $RAILS_MASTER_KEY
+      mysql_root_password:
+        type: string
+        default: $MYSQL_ROOT_PASSWORD
+      tz:
+        type: string
+        default: $TZ
+    # 作業用のディレクトリを設定
+    working_directory: ~/test_rspec
+    # タスクを定義
+    steps:
+      # リポジトリを作業用のディレクトリにpull
+      - checkout
+      # 処理を実行
+      # db.envは公開していないため、まずは空ファイルを作成する。
+      - run:
+          name: .envの空ファイルを作成
+          command: touch .env
+      # parametersに設定したCircleCIの環境変数を.envに書き込んでDockerコンテナ内で読み込む
+      - run:
+          name: .envに環境変数にRAILS_MASTER_KEYを設定
+          command: echo RAILS_MASTER_KEY=<< parameters.rails_master_key >> >> .env
+      - run:
+          name: .envに環境変数MYSQL_ROOT_PASSWORDを設定
+          command: echo MYSQL_ROOT_PASSWORD=<< parameters.mysql_root_password >> >> .env
+      - run:
+          name: .envに環境変数にTZを設定
+          command: echo TZ=<< parameters.tz >> >> .env
+      # docker composeで各種コマンドを順次実行する。
+      - run:
+          name: Dockerコンテナのビルドを実行
+          command: docker compose build --no-cache
+      - run:
+          name: Dockerコンテナの起動
+          command: docker compose up -d
+      # Dockerコンテナ起動後、すぐにDBを作成しようとするとエラーが発生する可能性があるため、少し待機する。
+      - run:
+          name: DB接続前の待機時間 10s
+          command: sleep 10
+      - run:
+          name: DBを作成
+          command: docker compose exec app rails db:create
+      - run:
+          name: マイグレーションを実行
+          command: docker compose exec app rails db:migrate
+      - run:
+          name: RSpecの実行
+          command: docker compose exec app bin/rspec
+      - run:
+          name: 起動中のDockerコンテナを停止して削除
+          command: docker compose down
+
+# AWS ECSへのWebサーバー用のデプロイ用ジョブ
+  deploy_aws_web:
+    # 作業用のディレクトリを設定
+    working_directory: ~/deploy_aws_web
+    steps:
+      # リポジトリを作業用のディレクトリにpull
+      - checkout
+      # ECRにDockerイメージをプッシュ
+      - aws-ecr/build-and-push-image:
+          # AWSアカウントへのアクセス情報
+          # AWS_ECR_ACCOUNT_URL（アカウントID.dkr.ecr.リージョン.amazonaws.com）
+          account-url: AWS_ECR_ACCOUNT_URL
+          region: AWS_REGION
+          # Dockerfileのパス
+          dockerfile: ./nginx/Dockerfile
+          # ECRのリポジトリ
+          repo: spa2210-b_web
+          tag: "latest"
+    # ECSのサービスを更新
+    - aws-ecs/deploy-service-update:
+          # ECRへのDockerイメージのプッシュ完了後に実行
+          requires:
+            - aws-ecr/build-and-push-image
+          # クラスター名
+          cluster: "spa2210-b-cluster"
+          # サービス名
+          service-name: "spa2210-b-service"
+          # タスク定義名
+          family: "spa2210-b-3-task"
+          # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
+          container-image-name-updates: "container=spa2210-b_web,tag=latest"
+
+# AWS ECSへのアプリ用のデプロイ用ジョブ
+  deploy_aws_app:
+    # 作業用のディレクトリを設定
+    working_directory: ~/deploy_aws_app
+    steps:
+      # リポジトリを作業用のディレクトリにpull
+      - checkout
+      # ECRにDockerイメージをプッシュ
+      - aws-ecr/build-and-push-image:
+          # AWSアカウントへのアクセス情報
+          # AWS_ECR_ACCOUNT_URL（アカウントID.dkr.ecr.リージョン.amazonaws.com）
+          account-url: AWS_ECR_ACCOUNT_URL
+          region: AWS_REGION
+          # Dockerfileのパス
+          dockerfile: ./Dockerfile
+          # ECRのリポジトリ
+          repo: spa2210-b_app
+          tag: "latest"
+    # ECSのサービスを更新
+    - aws-ecs/deploy-service-update:
+          # ECRへのDockerイメージのプッシュ完了後に実行
+          requires:
+            - aws-ecr/build-and-push-image
+          # クラスター名
+          cluster: "spa2210-b-cluster"
+          # サービス名
+          service-name: "spa2210-b-service"
+          # タスク定義名
+          family: "spa2210-b-3-task"
+          # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
+          container-image-name-updates: "container=spa2210-b_app,tag=latest"
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  test-and-deploy-wf:
+    jobs:
+      - test
+      - deploy_aws_web
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+      - deploy_aws_app
+          requires:
+            - test
+            - deploy_aws_web
+          filters:
+            branches:
+              only: main
