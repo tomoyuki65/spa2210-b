@@ -75,27 +75,25 @@ jobs:
 
   # ECR（Webサーバー用）のデプロイ用ジョブ
   deploy_ecr_web:
-    steps:
-      # ECRにDockerイメージをプッシュ
-      - aws-ecr/build-and-push-image:
-          # Dockerfileのパス
-          dockerfile: ./nginx/Dockerfile
-          # ECRのリポジトリ
-          repo: spa2210-b_web
-          tag: "latest"
+    # ECRにDockerイメージをプッシュ
+    - aws-ecr/build-and-push-image:
+        # Dockerfileのパス
+        dockerfile: ./nginx/Dockerfile
+        # ECRのリポジトリ
+        repo: spa2210-b_web
+        tag: "latest"
 
   # ECS（Webサーバー用）のデプロイ用ジョブ
   deploy_ecs_web:
-    steps:
-      - aws-ecs/deploy-service-update:
-          # クラスター名
-          cluster: "spa2210-b-cluster"
-          # サービス名
-          service-name: "spa2210-b-service"
-          # タスク定義名
-          family: "spa2210-b-3-task"
-          # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
-          container-image-name-updates: "container=spa2210-b_web,tag=latest"
+    - aws-ecs/deploy-service-update:
+        # クラスター名
+        cluster: "spa2210-b-cluster"
+        # サービス名
+        service-name: "spa2210-b-service"
+        # タスク定義名
+        family: "spa2210-b-3-task"
+        # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
+        container-image-name-updates: "container=spa2210-b_web,tag=latest"
 
   # ECR（アプリ用）のデプロイ用ジョブ
   deploy_ecr_app:
@@ -136,15 +134,43 @@ workflows:
       - deploy_ecs_web
           requires:
             - deploy_ecr_web
-      - deploy_ecr_app
-          requires:
-            - test
-          filters:
-            branches:
-              only: main
-      - deploy_ecs_app
-          requires:
-            - deploy_ecr_app
+
+      # ECRにDockerイメージをプッシュ
+      # - aws-ecr/build-and-push-image:
+      #     # Dockerfileのパス
+      #     dockerfile: ./nginx/Dockerfile
+      #     # ECRのリポジトリ
+      #     repo: spa2210-b_web
+      #     tag: "latest"
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: main
+      # - aws-ecs/deploy-service-update:
+      #     # クラスター名
+      #     cluster: "spa2210-b-cluster"
+      #     # サービス名
+      #     service-name: "spa2210-b-service"
+      #     # タスク定義名
+      #     family: "spa2210-b-3-task"
+      #     # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
+      #     container-image-name-updates: "container=spa2210-b_web,tag=latest"
+      #     requires:
+      #       - aws-ecr/build-and-push-image
+
+      # - deploy_ecs_web
+      #     requires:
+      #       - deploy_ecr_web
+      # - deploy_ecr_app
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: main
+      # - deploy_ecs_app
+      #     requires:
+      #       - deploy_ecr_app
 
   # deploy_aws_web-wf:
   #   jobs:
