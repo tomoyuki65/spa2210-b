@@ -77,7 +77,7 @@ jobs:
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   # テスト実行用のWF
-  test:
+  test-wf:
     jobs:
       - test
   # Webサーバー用のデプロイWF
