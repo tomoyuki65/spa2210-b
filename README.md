@@ -67,4 +67,4 @@ AWS_ACCESS_KEY_ID=デプロイ用ユーザーのアクセスキーID
 
 ## 参考記事
 技術ブログも作成していますので、興味がある方は下記の記事を参考にしてみて下さい。  
-[・SPA構成Webアプリ開発方法まとめ](https://tomoyuki65.com/how-to-develop-a-web-application-with-spa//)  
+[・SPA構成Webアプリ開発方法まとめ](https://tomoyuki65.com/how-to-develop-a-web-application-with-spa/)  
