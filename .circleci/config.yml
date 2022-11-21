@@ -89,7 +89,6 @@ workflows:
           # ECRのリポジトリ
           repo: spa2210-b_web
           tag: "latest"
-          skip-when-tags-exist: true
           # ジョブの実行条件
           requires:
             - test
