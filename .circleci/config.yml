@@ -78,13 +78,14 @@ jobs:
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 # 複数のワークフローがある場合、並列で実行されます。
 workflows:
-  # Webサーバー用のデプロイWF
-  test-and-deploy-web-wf:
+  test-and-deploy-wf:
     jobs:
       # テストを実行
       - test
+      # Webサーバー用のデプロイ処理
       # ECRにDockerイメージをプッシュ
       - aws-ecr/build-and-push-image:
+          name: deploy-ecr-web
           # Dockerfileのパス
           dockerfile: ./nginx/Dockerfile
           # ECRのリポジトリ
@@ -98,6 +99,7 @@ workflows:
               only: main
       # ECSのサービスを更新
       - aws-ecs/deploy-service-update:
+          name: deploy-ecs-web
           # クラスター名
           cluster: "spa2210-b-cluster"
           # タスク定義名
@@ -106,14 +108,10 @@ workflows:
           container-image-name-updates: "container=spa2210-b_web,tag=latest"
           # ジョブの実行条件
           requires:
-            - aws-ecr/build-and-push-image
-  # アプリ用のデプロイWF
-  test-and-deploy-app-wf:
-    jobs:
-      # テストを実行
-      - test
+            - deploy-ecr-web
       # ECRにDockerイメージをプッシュ
       - aws-ecr/build-and-push-image:
+          name: deploy-ecr-app
           # Dockerfileのパス
           dockerfile: .//Dockerfile
           # ECRのリポジトリ
@@ -121,11 +119,9 @@ workflows:
           tag: "latest"
           # ジョブの実行条件
           requires:
-            - test
-          filters:
-            branches:
-              only: main
+            - deploy-ecs-web
       - aws-ecs/deploy-service-update:
+          name: deploy-ecs-app
           # クラスター名
           cluster: "spa2210-b-cluster"
           # タスク定義名
@@ -134,4 +130,62 @@ workflows:
           container-image-name-updates: "container=spa2210-b_app,tag=latest"
           # ジョブの実行条件
           requires:
-            - aws-ecr/build-and-push-image
+            - deploy-ecr-app
+
+  # # Webサーバー用のデプロイWF
+  # test-and-deploy-web-wf:
+  #   jobs:
+  #     # テストを実行
+  #     - test
+  #     # ECRにDockerイメージをプッシュ
+  #     - aws-ecr/build-and-push-image:
+  #         # Dockerfileのパス
+  #         dockerfile: ./nginx/Dockerfile
+  #         # ECRのリポジトリ
+  #         repo: spa2210-b_web
+  #         tag: "latest"
+  #         # ジョブの実行条件
+  #         requires:
+  #           - test
+  #         filters:
+  #           branches:
+  #             only: main
+  #     # ECSのサービスを更新
+  #     - aws-ecs/deploy-service-update:
+  #         # クラスター名
+  #         cluster: "spa2210-b-cluster"
+  #         # タスク定義名
+  #         family: "spa2210-b-3-task"
+  #         # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
+  #         container-image-name-updates: "container=spa2210-b_web,tag=latest"
+  #         # ジョブの実行条件
+  #         requires:
+  #           - aws-ecr/build-and-push-image
+  # # アプリ用のデプロイWF
+  # test-and-deploy-app-wf:
+  #   jobs:
+  #     # テストを実行
+  #     - test
+  #     # ECRにDockerイメージをプッシュ
+  #     - aws-ecr/build-and-push-image:
+  #         # Dockerfileのパス
+  #         dockerfile: .//Dockerfile
+  #         # ECRのリポジトリ
+  #         repo: spa2210-b_app
+  #         tag: "latest"
+  #         # ジョブの実行条件
+  #         requires:
+  #           - test
+  #         filters:
+  #           branches:
+  #             only: main
+  #     - aws-ecs/deploy-service-update:
+  #         # クラスター名
+  #         cluster: "spa2210-b-cluster"
+  #         # タスク定義名
+  #         family: "spa2210-b-3-task"
+  #         # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
+  #         container-image-name-updates: "container=spa2210-b_app,tag=latest"
+  #         # ジョブの実行条件
+  #         requires:
+  #           - aws-ecr/build-and-push-image
