@@ -91,8 +91,8 @@ jobs:
           # ECRのリポジトリ
           repo: spa2210-b_web
           tag: "latest"
-    # ECSのサービスを更新
-    - aws-ecs/deploy-service-update:
+      # ECSのサービスを更新
+      - aws-ecs/deploy-service-update:
           # ECRへのDockerイメージのプッシュ完了後に実行
           requires:
             - aws-ecr/build-and-push-image
@@ -123,8 +123,8 @@ jobs:
           # ECRのリポジトリ
           repo: spa2210-b_app
           tag: "latest"
-    # ECSのサービスを更新
-    - aws-ecs/deploy-service-update:
+      # ECSのサービスを更新
+      - aws-ecs/deploy-service-update:
           # ECRへのDockerイメージのプッシュ完了後に実行
           requires:
             - aws-ecr/build-and-push-image
