@@ -126,14 +126,14 @@ workflows:
     jobs:
       - test
       - deploy_ecr_web
-          requires:
-            - test
-          filters:
-            branches:
-              only: main
+        requires:
+          - test
+        filters:
+          branches:
+            only: main
       - deploy_ecs_web
-          requires:
-            - deploy_ecr_web
+        requires:
+          - deploy_ecr_web
 
       # ECRにDockerイメージをプッシュ
       # - aws-ecr/build-and-push-image:
