@@ -11,6 +11,7 @@ Docker
 docker-compose  
 RSpec  
 MySQL  
+AWS ECS  
 
 ## 注意点  
 このアプリの起動には以下が必要です。  
