@@ -7,6 +7,7 @@ class ApplicationController < ActionController::API
       { id: 1, title: "First Text", text: "最初のテキスト" },
       { id: 2, title: "Second Text", text: "2番目のテキスト" },
       { id: 3, title: "Third Text", text: "3番目のテキスト" },
+      { id: 4, title: "Four Text", text: "4番目のテキスト" },
     ]
 
     # JSON形式で出力
