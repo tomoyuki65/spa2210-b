@@ -73,13 +73,14 @@ jobs:
           name: 起動中のDockerコンテナを停止して削除
           command: docker compose down
 
-# AWS ECSへのWebサーバー用のデプロイ用ジョブ
-  deploy_aws_web:
-    # 作業用のディレクトリを設定
-    working_directory: ~/deploy_aws_web
-    steps:
-      # リポジトリを作業用のディレクトリにpull
-      - checkout
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  test-wf:
+    jobs:
+      - test
+  deploy_aws_web-wf:
+    jobs:
       # ECRにDockerイメージをプッシュ
       - aws-ecr/build-and-push-image:
           # AWSアカウントへのアクセス情報
@@ -91,6 +92,12 @@ jobs:
           # ECRのリポジトリ
           repo: spa2210-b_web
           tag: "latest"
+          # ジョブの実行条件
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
       # ECSのサービスを更新
       - aws-ecs/deploy-service-update:
           # ECRへのDockerイメージのプッシュ完了後に実行
@@ -104,14 +111,8 @@ jobs:
           family: "spa2210-b-3-task"
           # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
           container-image-name-updates: "container=spa2210-b_web,tag=latest"
-
-# AWS ECSへのアプリ用のデプロイ用ジョブ
-  deploy_aws_app:
-    # 作業用のディレクトリを設定
-    working_directory: ~/deploy_aws_app
-    steps:
-      # リポジトリを作業用のディレクトリにpull
-      - checkout
+  deploy_aws_app-wf:
+    jobs:
       # ECRにDockerイメージをプッシュ
       - aws-ecr/build-and-push-image:
           # AWSアカウントへのアクセス情報
@@ -123,6 +124,12 @@ jobs:
           # ECRのリポジトリ
           repo: spa2210-b_app
           tag: "latest"
+          # ジョブの実行条件
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
       # ECSのサービスを更新
       - aws-ecs/deploy-service-update:
           # ECRへのDockerイメージのプッシュ完了後に実行
@@ -136,23 +143,3 @@ jobs:
           family: "spa2210-b-3-task"
           # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
           container-image-name-updates: "container=spa2210-b_app,tag=latest"
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  test-and-deploy-wf:
-    jobs:
-      - test
-      - deploy_aws_web
-          requires:
-            - test
-          filters:
-            branches:
-              only: main
-      - deploy_aws_app
-          requires:
-            - test
-            - deploy_aws_web
-          filters:
-            branches:
-              only: main
