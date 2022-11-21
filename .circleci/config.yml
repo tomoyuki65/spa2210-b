@@ -100,8 +100,6 @@ workflows:
       - aws-ecs/deploy-service-update:
           # クラスター名
           cluster: "spa2210-b-cluster"
-          # サービス名
-          service-name: "spa2210-b-service"
           # タスク定義名
           family: "spa2210-b-3-task"
           # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
@@ -130,8 +128,6 @@ workflows:
       - aws-ecs/deploy-service-update:
           # クラスター名
           cluster: "spa2210-b-cluster"
-          # サービス名
-          service-name: "spa2210-b-service"
           # タスク定義名
           family: "spa2210-b-3-task"
           # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
