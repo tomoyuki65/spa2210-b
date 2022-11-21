@@ -99,7 +99,7 @@ workflows:
       # ECSのサービスを更新
       - aws-ecs/deploy-service-update:
           # クラスター名
-          cluster-name: "spa2210-b-cluster"
+          cluster: "spa2210-b-cluster"
           # サービス名
           service-name: "spa2210-b-service"
           # タスク定義名
@@ -129,7 +129,7 @@ workflows:
               only: main
       - aws-ecs/deploy-service-update:
           # クラスター名
-          cluster-name: "spa2210-b-cluster"
+          cluster: "spa2210-b-cluster"
           # サービス名
           service-name: "spa2210-b-service"
           # タスク定義名
