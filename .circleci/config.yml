@@ -75,14 +75,12 @@ jobs:
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+# 複数のワークフローがある場合、並列で実行されます。
 workflows:
-  # テスト実行用のWF
-  # test-wf:
-  #   jobs:
-  #     - test
   # Webサーバー用のデプロイWF
-  deploy-web-wf:
+  test-and-deploy-web-wf:
     jobs:
+      # テストを実行
       - test
       # ECRにDockerイメージをプッシュ
       - aws-ecr/build-and-push-image:
@@ -111,8 +109,9 @@ workflows:
           requires:
             - aws-ecr/build-and-push-image
   # アプリ用のデプロイWF
-  deploy-app-wf:
+  test-and-deploy-app-wf:
     jobs:
+      # テストを実行
       - test
       # ECRにDockerイメージをプッシュ
       - aws-ecr/build-and-push-image:
