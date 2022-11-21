@@ -102,6 +102,8 @@ workflows:
           name: deploy-ecs-web
           # クラスター名
           cluster: "spa2210-b-cluster"
+          # サービス名
+          service-name: "spa2210-service"
           # タスク定義名
           family: "spa2210-b-3-task"
           # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
@@ -124,6 +126,8 @@ workflows:
           name: deploy-ecs-app
           # クラスター名
           cluster: "spa2210-b-cluster"
+          # サービス名
+          service-name: "spa2210-service"
           # タスク定義名
           family: "spa2210-b-3-task"
           # タスク定義の対象コンテナを更新（コンテナ名とタグを指定）
