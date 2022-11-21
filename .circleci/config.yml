@@ -6,6 +6,7 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@8.1.3
   aws-ecs: circleci/aws-ecs@03.2.0
+  #aws-cli: circleci/aws-cli@3.1.3
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -98,7 +99,7 @@ workflows:
       # ECSのサービスを更新
       - aws-ecs/deploy-service-update:
           # クラスター名
-          cluster: "spa2210-b-cluster"
+          cluster-name: "spa2210-b-cluster"
           # サービス名
           service-name: "spa2210-b-service"
           # タスク定義名
@@ -128,7 +129,7 @@ workflows:
               only: main
       - aws-ecs/deploy-service-update:
           # クラスター名
-          cluster: "spa2210-b-cluster"
+          cluster-name: "spa2210-b-cluster"
           # サービス名
           service-name: "spa2210-b-service"
           # タスク定義名
