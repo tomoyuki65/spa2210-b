@@ -11,4 +11,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # API用のルーティング
+  namespace "api" do
+    namespace "v1" do
+      resource :users, only: [:create, :destroy]
+    end
+  end
+
 end
