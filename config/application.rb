@@ -37,5 +37,7 @@ module Spa2210B
     config.time_zone = "Asia/Tokyo"
     config.active_record.default_timezone = :local
 
+    # lib配下のファイルを読み込み
+    config.autoload_paths += %W(#{config.root}/lib)
   end
 end

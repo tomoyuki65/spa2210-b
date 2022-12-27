@@ -3,6 +3,7 @@ SPA構成で作るWebアプリケーションのバックエンド（Rails7のAP
 
 ## 機能一覧  
 ・テスト用のAPI（/api/v1/test）  
+・ユーザー登録・削除用のAPI（/api/v1/users）  
 
 ## 使用技術  
 Ruby "3.1.2"  
@@ -61,9 +62,9 @@ RAILS_MASTER_KEY=master.key
 MYSQL_ROOT_PASSWORD=.envに記載したMySQL用のパスワード  
 TZ=.envに記載したタイムゾーン（Asia/Tokyo）  
 AWS_ACCESS_KEY_ID=デプロイ用ユーザーのアクセスキーID  
- AWS_SECRET_ACCESS_KEY=デプロイ用ユーザーのシークレットアクセスキー  
- AWS_REGION=リージョン（東京なら「ap-northeast-1」）  
- AWS_ECR_REGISTRY_ID=AWSのアカウントID（12桁の数字）  
+AWS_SECRET_ACCESS_KEY=デプロイ用ユーザーのシークレットアクセスキー  
+AWS_REGION=リージョン（東京なら「ap-northeast-1」）  
+AWS_ECR_REGISTRY_ID=AWSのアカウントID（12桁の数字）  
 
 ## 参考記事
 技術ブログも作成していますので、興味がある方は下記の記事を参考にしてみて下さい。  
